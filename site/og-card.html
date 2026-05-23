@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Social share card render template — open in a browser or screenshot at 1200x630.
+         Produces site/og.png used for og:image / twitter:image. -->
+    <style>
+      @font-face {
+        font-family: "Caveat";
+        src: url("./fonts/caveat-latin.woff2") format("woff2");
+        font-weight: 400 700;
+        font-display: block;
+      }
+      @font-face {
+        font-family: "Patrick Hand";
+        src: url("./fonts/patrickhand-latin.woff2") format("woff2");
+        font-weight: 400;
+        font-display: block;
+      }
+      :root {
+        --paper: #fbf6e9;
+        --ink: #20262f;
+        --ink-soft: #5d6675;
+        --yellow: #ffd34d;
+        --blue: #2b4cff;
+        --red: #e23b3b;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1200px; height: 630px; }
+      body {
+        position: relative;
+        overflow: hidden;
+        font-family: "Patrick Hand", sans-serif;
+        color: var(--ink);
+        background-color: var(--paper);
+        background-image:
+          linear-gradient(rgba(31, 37, 48, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(31, 37, 48, 0.05) 1px, transparent 1px);
+        background-size: 30px 30px;
+      }
+      /* brand */
+      .brand { position: absolute; top: 50px; left: 80px; display: flex; align-items: center; gap: 18px; }
+      .brand img { width: 76px; height: 76px; }
+      .brand span { font-family: "Caveat", cursive; font-size: 76px; font-weight: 700; line-height: 1; }
+
+      /* headline */
+      .headline {
+        position: absolute; left: 80px; top: 175px; width: 660px;
+        font-family: "Caveat", cursive; font-weight: 700; font-size: 108px; line-height: 0.96;
+      }
+      .hl { position: relative; white-space: nowrap; }
+      .hl::after {
+        content: ""; position: absolute; left: -8px; right: -8px; bottom: 12px; height: 42px;
+        background: var(--yellow); border-radius: 6px; z-index: -1; transform: rotate(-1.2deg);
+      }
+      .tagline {
+        position: absolute; left: 82px; top: 408px; width: 520px;
+        font-size: 35px; line-height: 1.42; color: var(--ink-soft);
+      }
+
+      /* chips */
+      .chips { position: absolute; left: 82px; bottom: 50px; display: flex; gap: 16px; }
+      .chip {
+        font-size: 28px; padding: 10px 22px; border: 3px solid var(--ink); border-radius: 16px;
+        background: #fffdf6; box-shadow: 4px 4px 0 rgba(32, 38, 47, 0.18);
+      }
+      .chip.y { background: var(--yellow); }
+
+      /* sky + plane scene (right side) */
+      .scene { position: absolute; right: 0; top: 0; width: 510px; height: 630px; }
+      .sun { position: absolute; top: 50px; right: 70px; width: 104px; height: 104px; }
+      .cloud { position: absolute; width: 168px; }
+      .cloud.a { top: 140px; right: 270px; }
+      .cloud.b { top: 235px; right: 70px; width: 130px; }
+
+      .flyer { position: absolute; top: 318px; right: 16px; display: flex; align-items: center; transform: rotate(-7deg); }
+      .banner {
+        position: relative; padding: 18px 24px; border: 3px solid var(--ink); border-radius: 8px;
+        font-size: 29px; color: #1a1a1a; box-shadow: 4px 4px 0 rgba(32, 38, 47, 0.18);
+        background: repeating-linear-gradient(-12deg, #ffffff 0 9px, #ffe24d 9px 18px);
+        white-space: nowrap;
+      }
+      .banner span { background: rgba(255,255,255,0.82); padding: 2px 8px; border-radius: 6px; }
+      .rope { width: 36px; height: 3px; background: var(--ink); }
+      .aircraft { position: relative; width: 256px; height: 256px; flex: none; }
+      .aircraft img { position: absolute; top: 0; left: 0; width: 256px; height: 256px; }
+    </style>
+  </head>
+  <body>
+    <div class="brand">
+      <img src="./logo.png" alt="" />
+      <span>Quakpit</span>
+    </div>
+
+    <div class="headline">Never miss a <span class="hl">meeting</span> again.</div>
+    <div class="tagline">A duck in a plane flies above every app, towing your next-meeting reminder.</div>
+
+    <div class="chips">
+      <div class="chip y">Free for macOS</div>
+      <div class="chip">Zero data</div>
+      <div class="chip">Open source</div>
+    </div>
+
+    <div class="scene">
+      <svg class="sun" viewBox="0 0 60 60" aria-hidden="true">
+        <g fill="none" stroke="#f4b400" stroke-width="3" stroke-linecap="round">
+          <circle cx="30" cy="30" r="12" fill="#ffd34d" />
+          <path d="M30 4v6M30 50v6M4 30h6M50 30h6M11 11l4 4M45 45l4 4M49 11l-4 4M15 45l-4 4" />
+        </g>
+      </svg>
+      <div class="cloud a">
+        <svg viewBox="0 0 120 44"><path d="M22 38 C6 38 4 22 18 20 C18 6 40 4 46 16 C54 6 78 8 78 22 C96 18 104 36 88 38 Z" fill="#fff" stroke="#20262f" stroke-width="2.2" stroke-linejoin="round" /></svg>
+      </div>
+      <div class="cloud b">
+        <svg viewBox="0 0 120 44"><path d="M22 38 C6 38 4 22 18 20 C18 6 40 4 46 16 C54 6 78 8 78 22 C96 18 104 36 88 38 Z" fill="#fff" stroke="#20262f" stroke-width="2.2" stroke-linejoin="round" /></svg>
+      </div>
+
+      <div class="flyer">
+        <div class="banner"><span>Stand-up in 5 min</span></div>
+        <div class="rope"></div>
+        <div class="aircraft">
+          <img class="plane" src="./plane-red-base.png" alt="" />
+          <img class="head" src="./head-duck.png" alt="" />
+          <img class="prop" src="./blade.png" alt="" />
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

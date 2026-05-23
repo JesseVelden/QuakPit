@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Quakpit — A duck flies by before your meetings</title>
+    <meta
+      name="description"
+      content="Quakpit is a tiny desktop app: a duck in a plane flies across your screen towing a banner that reminds you of your next meeting. Free for macOS (Windows coming soon). Zero data, no servers."
+    />
+    <meta name="theme-color" content="#fbf6e9" />
+    <meta property="og:title" content="Quakpit 🦆✈️" />
+    <meta
+      property="og:description"
+      content="A duck in a plane flies across your screen before every meeting. Free for macOS, Windows coming soon. Zero data."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://quakpit.app/" />
+    <!-- Social card 1200x630 (generated from og-card.html). Absolute URLs — required by scrapers. -->
+    <meta property="og:image" content="https://quakpit.app/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Quakpit — a duck in a plane flies above every app before each meeting" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://quakpit.app/og.png" />
+    <link rel="canonical" href="https://quakpit.app/" />
+    <link rel="icon" type="image/png" href="./favicon.png" />
+    <link rel="apple-touch-icon" href="./logo.png" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <!-- Wind-ripple filter (same effect as in the app) -->
+    <svg class="defs" aria-hidden="true" width="0" height="0">
+      <defs>
+        <filter id="banner-wave" x="-20%" y="-60%" width="140%" height="220%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.011 0.024" numOctaves="1" seed="7" result="noise" />
+          <feOffset in="noise" dx="0" dy="0" result="noiseShift">
+            <animate attributeName="dx" dur="3.2s" values="0;110;0" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" repeatCount="indefinite" />
+            <animate attributeName="dy" dur="2.4s" values="0;26;0" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" repeatCount="indefinite" />
+          </feOffset>
+          <feDisplacementMap in="SourceGraphic" in2="noiseShift" scale="20" xChannelSelector="R" yChannelSelector="G">
+            <animate attributeName="scale" dur="2.2s" values="16;30;16" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.45 0 0.55 1;0.45 0 0.55 1" repeatCount="indefinite" />
+          </feDisplacementMap>
+        </filter>
+      </defs>
+    </svg>
+
+    <header class="nav">
+      <div class="brand"><img class="brand-logo" src="./logo.png" alt="Quakpit logo" /> Quakpit</div>
+      <nav>
+        <a href="#how">How it works</a>
+        <a href="#customize">Customize</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+        <a class="nav-cta" href="#download">Download</a>
+      </nav>
+    </header>
+
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <!-- Product Hunt live badge (top-left, below the nav) -->
+      <a class="ph-badge" href="https://www.producthunt.com/products/quakpit?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-quakpit" target="_blank" rel="noopener noreferrer">
+        <img alt="QuakPit - Meeting reminders that actually make you smile. | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1155470&amp;theme=light&amp;t=1779717498199" />
+      </a>
+
+      <!-- the flight scene = a drawing taped into the notebook; planes added by app.js -->
+      <div class="sky-wrap tape">
+        <div class="sky">
+          <svg class="sun" viewBox="0 0 60 60" aria-hidden="true">
+            <g fill="none" stroke="#f4b400" stroke-width="3" stroke-linecap="round">
+              <circle cx="30" cy="30" r="12" fill="#ffd34d" />
+              <path d="M30 4v6M30 50v6M4 30h6M50 30h6M11 11l4 4M45 45l4 4M49 11l-4 4M15 45l-4 4" />
+            </g>
+          </svg>
+          <div class="cloud c1" aria-hidden="true">
+            <svg viewBox="0 0 120 44"><path d="M22 38 C6 38 4 22 18 20 C18 6 40 4 46 16 C54 6 78 8 78 22 C96 18 104 36 88 38 Z" fill="#fff" stroke="#20262f" stroke-width="2.2" stroke-linejoin="round" /></svg>
+          </div>
+          <div class="cloud c2" aria-hidden="true">
+            <svg viewBox="0 0 120 44"><path d="M22 38 C6 38 4 22 18 20 C18 6 40 4 46 16 C54 6 78 8 78 22 C96 18 104 36 88 38 Z" fill="#fff" stroke="#20262f" stroke-width="2.2" stroke-linejoin="round" /></svg>
+          </div>
+          <div class="cloud c3" aria-hidden="true">
+            <svg viewBox="0 0 120 44"><path d="M22 38 C6 38 4 22 18 20 C18 6 40 4 46 16 C54 6 78 8 78 22 C96 18 104 36 88 38 Z" fill="#fff" stroke="#20262f" stroke-width="2.2" stroke-linejoin="round" /></svg>
+          </div>
+          <!-- planes generated by app.js into .sky (several skins, staggered) -->
+        </div>
+      </div>
+
+      <div class="hero-copy" id="download">
+        <h1>Never miss a <span class="hl">meeting</span> again.</h1>
+        <p class="sub">
+          A little duck in a plane flies across your screen — above every app — towing a banner
+          that reminds you of your next meeting. Synced automatically from your calendar.
+        </p>
+
+        <div class="downloads-wrap">
+          <svg class="dl-arrow" viewBox="0 0 80 70" aria-hidden="true">
+            <g fill="none" stroke="#e23b3b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 8 C34 4 58 16 60 48" />
+              <path d="M62 50 L48 43 M62 50 L67 35" />
+            </g>
+          </svg>
+          <div class="downloads">
+            <a id="dl-mac" class="btn primary" href="#" rel="noopener">
+              <span class="ico"></span>
+              <span class="lbl"><b>Download for macOS</b><small>Apple Silicon &amp; Intel</small></span>
+            </a>
+          </div>
+        </div>
+        <p id="dl-note" class="dl-note">Free • macOS</p>
+        <p class="dl-soon"><img class="ic" src="./icons/duck.svg" alt="" /> Windows version coming soon</p>
+        <p class="os-line">Free &amp; open source — <a id="os-gh" href="#" rel="noopener">see the code on GitHub ↗</a></p>
+      </div>
+    </section>
+
+    <!-- ===== How it works ===== -->
+    <section id="how" class="band">
+      <p class="eyebrow center" style="display:block">▸ three little steps</p>
+      <h2>How it works</h2>
+      <p class="lead">Set it up once. Then forget it — the duck shows up on its own.</p>
+      <div class="steps">
+        <div class="step doodle reveal"><div class="n">1</div><h3>Connect your calendar</h3><p>Paste any iCal/ICS link (no login) or sign in to Apple iCloud — read-only, straight from your machine. Google &amp; Outlook are on the way.</p></div>
+        <div class="step doodle reveal"><div class="n">2</div><h3>Make it yours</h3><p>Pick your character and plane colour, a banner theme and your message, plus a 5- or 10-minute heads-up.</p></div>
+        <div class="step doodle reveal"><div class="n">3</div><h3>Get the fly-by</h3><p>Right on time, the plane crosses above every app with your message — and your character's little sound. <img class="ic" src="./icons/plane.svg" alt="" /></p></div>
+      </div>
+    </section>
+
+    <!-- ===== Comparison ===== -->
+    <section class="band alt">
+      <p class="eyebrow center" style="display:block">▸ why a duck?</p>
+      <h2>Notifications you'll <span class="hl">actually</span> see</h2>
+      <div class="compare">
+        <div class="cmp bad doodle reveal">
+          <img class="cmp-ic" src="./icons/bell-off.svg" alt="" />
+          <h3>System notification</h3>
+          <p>A grey toast in the corner for 3 seconds, behind your fullscreen call. Blink and it's gone.</p>
+        </div>
+        <div class="vs">vs</div>
+        <div class="cmp good doodle reveal">
+          <img class="cmp-ic" src="./icons/duck.svg" alt="" />
+          <h3>A whole duck</h3>
+          <p>A plane flies across <b>everything</b>, banner flapping, engine humming. Impossible to miss.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Customize / Playground ===== -->
+    <section id="customize" class="band">
+      <p class="eyebrow center" style="display:block">▸ make it yours</p>
+      <h2><span class="scribble-underline">Build your own flight</span></h2>
+      <p class="lead">Choose your character, plane colour, banner theme and message — then launch it and watch it cross the sky. Pro options are marked, but you can try them all here.</p>
+
+      <div class="pg">
+        <div class="pg-sky">
+          <div class="hint" id="pg-hint">Pick your bits below, then hit “Launch flight” <img class="ic" src="./icons/plane.svg" alt="" /></div>
+          <div class="flyer" id="pg-flyer">
+            <div class="banner"><span>Call with Jack in 5 minutes</span></div>
+            <div class="rope"></div>
+            <div class="aircraft">
+              <img class="plane" src="./plane-red-base.png" alt="" />
+              <img class="head" src="./head-duck.png" alt="" />
+              <img class="prop" src="./blade.png" alt="" />
+              <img class="custom" alt="" />
+            </div>
+          </div>
+        </div>
+
+        <div class="pg-controls">
+          <div class="pg-row">
+            <span class="label"><img class="ic" src="./icons/duck.svg" alt="" /> Character</span>
+            <div class="chips" id="pg-chars" role="group" aria-label="Choose a character"></div>
+          </div>
+          <div class="pg-row">
+            <span class="label"><img class="ic" src="./icons/plane.svg" alt="" /> Plane colour</span>
+            <div class="chips" id="pg-colors" role="group" aria-label="Choose a plane colour"></div>
+          </div>
+          <div class="pg-row">
+            <span class="label"><img class="ic" src="./icons/palette.svg" alt="" /> Banner</span>
+            <div class="chips" id="pg-themes" role="group" aria-label="Choose a banner theme"></div>
+          </div>
+          <div class="pg-row">
+            <label class="label" for="pg-message"><img class="ic" src="./icons/writing.svg" alt="" /> Message</label>
+            <input id="pg-message" class="pg-msg" type="text" maxlength="60" value="Call with Jack in 5 minutes" aria-label="Banner message" />
+          </div>
+          <div class="pg-actions">
+            <label class="toggle"><input type="checkbox" id="pg-sound" checked /> <img class="ic" src="./icons/speaker.svg" alt="" /> Sound</label>
+            <button class="btn launch" id="pg-launch"><span class="lbl"><b>Launch flight <img class="ic" src="./icons/plane.svg" alt="" /></b></span></button>
+            <button class="btn ghost" id="pg-hear"><span class="lbl"><b><img class="ic" src="./icons/speaker.svg" alt="" /> Hear it</b></span></button>
+          </div>
+          <p class="pg-note">Characters, colours and themes beyond the first are <a href="#pricing">Quakpit Pro</a> — play with them all here. <img class="ic" src="./icons/balloon.svg" alt="" /></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Features ===== -->
+    <section id="features" class="band alt">
+      <p class="eyebrow center" style="display:block">▸ the good bits</p>
+      <h2>Why you'll like it</h2>
+      <div class="grid">
+        <div class="card doodle reveal tape"><img class="card-ic" src="./icons/window.svg" alt="" /><h3>Above everything</h3><p>Floats over all your apps, even fullscreen — then disappears. It never blocks your clicks.</p></div>
+        <div class="card doodle reveal"><img class="card-ic" src="./icons/gear.svg" alt="" /><h3>Fully automatic</h3><p>Open it once. It quietly watches your calendar and launches the plane on time, by itself.</p></div>
+        <div class="card doodle reveal tape"><img class="card-ic" src="./icons/palette.svg" alt="" /><h3>Make it yours</h3><p>Five characters, five plane colours and five banner themes — plus your own message, font and sound.</p></div>
+        <div class="card doodle reveal"><img class="card-ic" src="./icons/leaf.svg" alt="" /><h3>Light &amp; quiet</h3><p>Lives in your menu bar. No window clutter, no spam — just the occasional duck.</p></div>
+      </div>
+    </section>
+
+    <!-- ===== Pricing ===== -->
+    <section id="pricing" class="band">
+      <p class="eyebrow center" style="display:block">▸ the price tag</p>
+      <h2>Free forever — Pro if you want more</h2>
+      <div class="tiers">
+        <div class="tier doodle reveal">
+          <h3>Free</h3>
+          <p class="price">$0</p>
+          <ul>
+            <li><img class="ic" src="./icons/plane.svg" alt="" /> The duck flies above your apps before each meeting</li>
+            <li><img class="ic" src="./icons/calendar.svg" alt="" /> Connect a calendar — iCal link or Apple iCloud (one source)</li>
+            <li><img class="ic" src="./icons/bell.svg" alt="" /> 5- or 10-minute heads-up (+ optional ping at start)</li>
+            <li><img class="ic" src="./icons/writing.svg" alt="" /> Your own message &amp; any of 5 fonts</li>
+            <li><img class="ic" src="./icons/speaker.svg" alt="" /> Engine sound + quack</li>
+          </ul>
+          <a class="btn" href="#download">Download free</a>
+        </div>
+        <div class="tier featured doodle reveal tape">
+          <span class="ribbon">PRO</span>
+          <h3>Pro</h3>
+          <p class="price">$4.99<span> once</span></p>
+          <ul>
+            <li><img class="ic" src="./icons/duck.svg" alt="" /> 4 more characters (Corgi, Dino, Pigeon, Capybara) + their sounds</li>
+            <li><img class="ic" src="./icons/plane.svg" alt="" /> 4 more plane colours (Blue, Green, Pink, Black)</li>
+            <li><img class="ic" src="./icons/palette.svg" alt="" /> 4 more banner themes (Midnight, Sunset, Mint, Bubblegum)</li>
+            <li><img class="ic" src="./icons/rocket.svg" alt="" /> Faster fly-bys (1.5× &amp; 2× speed)</li>
+            <li><img class="ic" src="./icons/calendar.svg" alt="" /> Combine several calendars at once</li>
+          </ul>
+          <a class="btn primary" id="buy-pro" href="https://buy.polar.sh/polar_cl_QkoaWmIHnH4hXJGdCKEf3hK88I0s3YyUQepmO2mMpZm" target="_blank" rel="noopener">Get Pro</a>
+          <p class="tier-note">One-time payment · activate in the app · 1 device · yours forever</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Privacy ===== -->
+    <section id="privacy" class="band alt privacy">
+      <img class="lock-ic" src="./icons/lock.svg" alt="" />
+      <h2>Zero data. No servers.</h2>
+      <p>
+        Quakpit has no backend and no database. Your calendar is read <b>directly on your device</b>,
+        kept only in memory, and never written to disk or sent anywhere. No telemetry, no analytics.
+        The only thing it can store is your encrypted sign-in token — and only if you ask it to.
+      </p>
+    </section>
+
+    <!-- ===== FAQ ===== -->
+    <section id="faq" class="band">
+      <p class="eyebrow center" style="display:block">▸ in case you wondered</p>
+      <h2>Questions &amp; answers</h2>
+      <div class="faq">
+        <details class="doodle"><summary>Which calendars work?</summary><p>Add a calendar by iCal/ICS link (the easiest — no login) or connect Apple iCloud. Google and Outlook are on the way. Everything is read-only; the free plan connects one source, Pro combines several at once.</p></details>
+        <details class="doodle"><summary>Does it work over fullscreen apps?</summary><p>Yes. The plane floats above everything — even a fullscreen call or presentation — and it's click-through, so it never gets in your way. Then it flies off.</p></details>
+        <details class="doodle"><summary>What's free, and what's Pro?</summary><p>Free forever: the duck, one calendar, 5/10-minute reminders, your message and all five fonts. Pro ($4.99) adds 4 more characters with their own sounds, 4 plane colours, 4 banner themes, faster fly-bys, several calendars at once, and your own custom plane. The app is open source (MIT) on GitHub.</p></details>
+        <details class="doodle"><summary>What about my privacy?</summary><p>There's no backend. Your calendar is read straight from your device and kept only in memory — never written to disk or sent to us. Your sign-in is stored encrypted (Keychain / Windows DPAPI) only if you ask. No telemetry, no analytics. See the <a href="#privacy">privacy note</a> above.</p></details>
+        <details class="doodle"><summary>Which platforms?</summary><p>macOS (Apple Silicon &amp; Intel) is available now — a Windows build (10 &amp; 11) is coming soon. It lives in your menu bar and updates itself. The button above grabs the latest release.</p></details>
+        <details class="doodle"><summary>How do I uninstall it?</summary><p>Like any normal app: just drag it to the Trash on macOS (and once the Windows build lands, uninstall it from Settings). It leaves nothing behind on a server, because there's no server.</p></details>
+      </div>
+    </section>
+
+    <!-- ===== About Ooble Studio ===== -->
+    <section id="studio" class="band alt studio">
+      <p class="eyebrow center" style="display:block">▸ who's behind the duck</p>
+      <h2>Made by hand at <span class="hl">Ooble Studio</span></h2>
+      <div class="studio-card doodle tape reveal">
+        <p class="studio-lead">
+          Ooble Studio is a small creative design studio (since 2022) crafting premium UX/UI,
+          branding and product strategy for Web3, AI and tech teams — 100+ projects shipped.
+          Quakpit is one of our own little experiments: the same care we put into client work,
+          pointed at a duck in a plane.
+        </p>
+        <p class="studio-quote">“We don't follow trends — we design what's next.”</p>
+        <div class="studio-links">
+          <a class="btn primary" href="https://ooble.studio" target="_blank" rel="noopener">Visit ooble.studio ↗</a>
+          <a class="btn" href="https://x.com/ooblestudio" target="_blank" rel="noopener">Say hi on X ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <div><img class="foot-logo" src="./logo.png" alt="" /> Quakpit — © <span id="year"></span> <a href="https://ooble.studio" target="_blank" rel="noopener">Ooble Studio</a> · made by hand</div>
+      <div class="links">
+        <a href="https://ooble.studio" target="_blank" rel="noopener">Ooble Studio</a>
+        <a href="https://x.com/ooblestudio" target="_blank" rel="noopener">X / Twitter</a>
+        <a id="gh-link" href="#" rel="noopener">GitHub</a>
+        <a href="#privacy">Privacy</a>
+        <a href="https://openmoji.org" target="_blank" rel="noopener">Icons by OpenMoji</a>
+      </div>
+    </footer>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

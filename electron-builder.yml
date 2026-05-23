@@ -1,0 +1,59 @@
+appId: com.ooblestudio.quakpit
+productName: Quakpit
+copyright: © Ooble Studio
+
+directories:
+  buildResources: build
+  output: dist
+
+files:
+  - out/**/*
+  - package.json
+  - "!**/*.{ts,map}"
+
+mac:
+  category: public.app-category.productivity
+  icon: build/icon.png
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  # Notarization is enabled automatically when Apple credentials are present
+  # in the environment (APPLE_ID / APPLE_APP_SPECIFIC_PASSWORD / APPLE_TEAM_ID).
+  notarize: true
+  # Clean, app-named output files (e.g. Quakpit.dmg) instead of Quakpit-<ver>-universal.dmg.
+  artifactName: ${productName}.${ext}
+  target:
+    - target: dmg
+      arch: [universal]
+    # zip is required for macOS auto-update (Squirrel.Mac updates from the zip).
+    - target: zip
+      arch: [universal]
+
+win:
+  icon: build/icon.png
+  target:
+    - target: nsis
+      arch: [x64, arm64]
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+
+# Custom DMG window: notebook-style background with the drag-to-Applications
+# arrow + the "Apple is still verifying" first-launch note (removed once notarized).
+dmg:
+  title: Quakpit
+  background: build/dmg-background.png
+  window: { width: 600, height: 420 }
+  iconSize: 112
+  contents:
+    - { x: 150, y: 175, type: file }
+    - { x: 450, y: 175, type: link, path: /Applications }
+
+# Auto-update feed (electron-updater). Adjust owner/repo before publishing.
+publish:
+  provider: github
+  owner: Ooble-Studio
+  repo: QuakPit

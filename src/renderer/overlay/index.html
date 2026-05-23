@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' ws: wss:;"
+    />
+    <title>Quakpit Overlay</title>
+    <link rel="stylesheet" href="./overlay.css" />
+  </head>
+  <body>
+    <!-- Animated "wind" filter that ripples the banner like cloth -->
+    <svg class="filters" aria-hidden="true" width="0" height="0">
+      <defs>
+        <filter id="banner-wave" x="-20%" y="-60%" width="140%" height="220%">
+          <!-- Stable, low-frequency noise = large soft waves (no boiling shimmer). -->
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.011 0.024"
+            numOctaves="1"
+            seed="7"
+            result="noise"
+          />
+          <!-- Glide the wave fast along the banner + vertical billow (eased = fluid). -->
+          <feOffset in="noise" dx="0" dy="0" result="noiseShift">
+            <animate
+              attributeName="dx"
+              dur="3.2s"
+              values="0;110;0"
+              calcMode="spline"
+              keyTimes="0;0.5;1"
+              keySplines="0.45 0 0.55 1;0.45 0 0.55 1"
+              repeatCount="indefinite"
+            />
+            <animate
+              attributeName="dy"
+              dur="2.4s"
+              values="0;26;0"
+              calcMode="spline"
+              keyTimes="0;0.5;1"
+              keySplines="0.45 0 0.55 1;0.45 0 0.55 1"
+              repeatCount="indefinite"
+            />
+          </feOffset>
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="noiseShift"
+            scale="20"
+            xChannelSelector="R"
+            yChannelSelector="G"
+          >
+            <animate
+              attributeName="scale"
+              dur="2.2s"
+              values="16;30;16"
+              calcMode="spline"
+              keyTimes="0;0.5;1"
+              keySplines="0.45 0 0.55 1;0.45 0 0.55 1"
+              repeatCount="indefinite"
+            />
+          </feDisplacementMap>
+        </filter>
+      </defs>
+    </svg>
+
+    <div class="stage">
+      <div id="flyer" class="flyer">
+        <!-- Trailing advertising banner -->
+        <div class="banner"><span id="banner-text"></span></div>
+
+        <!-- Tow rope -->
+        <div class="rope"></div>
+
+        <!-- Leading aircraft: plane base + character head + spinning blade -->
+        <div class="aircraft">
+          <img class="plane" alt="" />
+          <img class="head" alt="" />
+          <img class="prop" alt="" />
+        </div>
+      </div>
+    </div>
+    <script type="module" src="./overlay.ts"></script>
+  </body>
+</html>

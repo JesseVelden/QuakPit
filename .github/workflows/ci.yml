@@ -1,0 +1,22 @@
+# Public CI: type-check + build the free app on every push / PR.
+# No secrets, no signing, no release — the signed release pipeline lives in the
+# private repo. This just proves the open-source app compiles.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm run build

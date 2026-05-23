@@ -1,0 +1,9 @@
+node_modules/
+out/
+dist/
+build/iconTemplate.png
+build/iconTemplate@2x.png
+build/icon.png
+*.log
+.DS_Store
+oauth-credentials.json

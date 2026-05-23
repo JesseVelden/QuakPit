@@ -1,0 +1,13 @@
+Icons bundled with the Quakpit landing page
+===========================================
+
+All icons in this folder are from OpenMoji — the open-source emoji and icon
+project (https://openmoji.org).
+
+License: Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+         https://creativecommons.org/licenses/by-sa/4.0/
+
+They are self-hosted here (not loaded from a CDN) so the site makes no
+third-party requests, in line with Quakpit's zero-tracking principle.
+
+Attribution is also shown in the site footer ("Icons by OpenMoji").

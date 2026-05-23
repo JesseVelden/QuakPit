@@ -1,0 +1,16 @@
+Self-hosted fonts bundled with the Quakpit landing page
+========================================================
+
+Both fonts are licensed under the SIL Open Font License, Version 1.1
+(https://scripts.sil.org/OFL). They are bundled (self-hosted) instead of
+loaded from a CDN so the site makes no third-party requests.
+
+- Caveat        — Copyright The Caveat Project Authors
+                  (https://github.com/googlefonts/caveat)
+                  file: caveat-latin.woff2 (latin subset)
+
+- Patrick Hand  — Copyright Patrick Wagesreiter
+                  (https://github.com/pia-pi/patrickhand)
+                  file: patrickhand-latin.woff2 (latin subset)
+
+Full license text: https://openfontlicense.org/open-font-license-official-text/
