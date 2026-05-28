@@ -38,7 +38,10 @@ const displaySel = $<HTMLSelectElement>('display')
 const sound = $<HTMLInputElement>('sound')
 const login = $<HTMLInputElement>('login')
 const stay = $<HTMLInputElement>('stay')
+const screenShare = $<HTMLInputElement>('screenshare')
+const screenShareRow = $('screenshare-row')
 const flyAtStart = $<HTMLInputElement>('flyatstart')
+const skipTentative = $<HTMLInputElement>('skiptentative')
 const proBanner = $('pro-banner')
 const calFreeNote = $('cal-free-note')
 calFreeNote.addEventListener('click', () => showTab('pro'))
@@ -89,8 +92,11 @@ pvProp.src = BLADE_URL
 const calPicker = $('cal-picker')
 const wizIcal = $('wiz-ical')
 const wizIcloud = $('wiz-icloud')
+const wizOutlook = $('wiz-outlook')
 const pickIcalStatus = $('pick-ical-status')
 const pickIcloudStatus = $('pick-icloud-status')
+const pickOutlookStatus = $('pick-outlook-status')
+const outlookBtn = document.querySelector<HTMLButtonElement>('[data-go="outlook"]')
 const upcomingList = $<HTMLUListElement>('upcoming')
 const upcomingRefresh = $<HTMLButtonElement>('upcoming-refresh')
 // iCal-link wizard
@@ -146,12 +152,14 @@ let prefs: Prefs = {
   soundEnabled: true,
   staySignedIn: true,
   launchAtLogin: false,
+  suppressDuringScreenShare: false,
   targetDisplay: 'cursor',
   theme: 'classic',
   flier: 'duck-plane',
   font: 'system',
   speed: 'normal',
   flyAtStart: false,
+  skipTentative: false,
   soundPack: 'quack',
   flierHead: 'duck',
   flierColor: 'red',
@@ -167,8 +175,11 @@ function fillPrefs(p: Prefs): void {
   sound.checked = p.soundEnabled
   login.checked = p.launchAtLogin
   stay.checked = p.staySignedIn
+  screenShare.checked = p.suppressDuringScreenShare
+  screenShareRow.classList.toggle('hidden', !supportsScreenSharePause)
   speedChoices.set(p.speed)
   flyAtStart.checked = p.flyAtStart
+  skipTentative.checked = p.skipTentative
   tryHead = null
   tryColor = null
   renderHeads()
@@ -185,7 +196,13 @@ displaySel.addEventListener('change', () =>
 sound.addEventListener('change', () => void q.setPrefs({ soundEnabled: sound.checked }))
 login.addEventListener('change', () => void q.setPrefs({ launchAtLogin: login.checked }))
 stay.addEventListener('change', () => void q.setPrefs({ staySignedIn: stay.checked }))
+screenShare.addEventListener('change', () =>
+  void q.setPrefs({ suppressDuringScreenShare: screenShare.checked })
+)
 flyAtStart.addEventListener('change', () => void q.setPrefs({ flyAtStart: flyAtStart.checked }))
+skipTentative.addEventListener('change', () =>
+  void q.setPrefs({ skipTentative: skipTentative.checked })
+)
 proBanner.addEventListener('click', () => showTab('pro'))
 
 // Banner-message token tags: insert {title} / {minutes} at the cursor.

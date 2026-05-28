@@ -46,6 +46,7 @@ function collect(ics: string, nowMs: number, endMs: number, out: UpcomingEvent[]
       if (!ev.startDate || ev.startDate.isDate) continue // skip all-day
       const title = ev.summary || 'Untitled event'
       const uid = ev.uid || ''
+      const tentative = String(ve.getFirstPropertyValue('status') ?? '').toLowerCase() === 'tentative'
       if (ev.isRecurring()) {
         const it = ev.iterator()
         let next = it.next()
@@ -53,12 +54,12 @@ function collect(ics: string, nowMs: number, endMs: number, out: UpcomingEvent[]
         while (next && guard++ < 1000) {
           const t = next.toJSDate().getTime()
           if (t > endMs) break
-          if (t >= nowMs) out.push({ id: `ical:${uid}:${t}`, title, start: t })
+          if (t >= nowMs) out.push({ id: `ical:${uid}:${t}`, title, start: t, tentative })
           next = it.next()
         }
       } else {
         const t = ev.startDate.toJSDate().getTime()
-        out.push({ id: `ical:${uid}:${t}`, title, start: t })
+        out.push({ id: `ical:${uid}:${t}`, title, start: t, tentative })
       }
     } catch {
       /* skip this event */

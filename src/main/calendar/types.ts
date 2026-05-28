@@ -1,5 +1,5 @@
 // Shared calendar types across providers (Google, iCloud, ...).
-export type UpcomingEvent = { id: string; title: string; start: number }
+export type UpcomingEvent = { id: string; title: string; start: number; tentative?: boolean }
 
 export type ProviderStatus = {
   id: string // 'google' | 'icloud' | 'ical' | 'outlook'

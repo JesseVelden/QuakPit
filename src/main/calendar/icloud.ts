@@ -118,10 +118,12 @@ function parseIcs(ics: string, out: UpcomingEvent[]): void {
       const ev = new ICAL.Event(ve)
       if (!ev.startDate || ev.startDate.isDate) continue // skip all-day
       const start = ev.startDate.toJSDate().getTime()
+      const status = String(ve.getFirstPropertyValue('status') ?? '').toLowerCase()
       out.push({
         id: `icloud:${ev.uid || ''}:${start}`,
         title: ev.summary || 'Untitled event',
-        start
+        start,
+        tentative: status === 'tentative'
       })
     }
   } catch {

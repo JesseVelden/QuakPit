@@ -19,7 +19,7 @@ const USERINFO_URL = 'https://openidconnect.googleapis.com/v1/userinfo'
 const EVENTS_URL = 'https://www.googleapis.com/calendar/v3/calendars/primary/events'
 
 type Creds = { clientId: string; clientSecret: string }
-export type UpcomingEvent = { id: string; title: string; start: number }
+export type UpcomingEvent = { id: string; title: string; start: number; tentative?: boolean }
 
 // In-memory session only. Refresh token is persisted *optionally* (see store).
 let accessToken: string | null = null
@@ -169,19 +169,20 @@ export async function listUpcoming(withinMinutes = 60): Promise<UpcomingEvent[]>
   for (const raw of json.items ?? []) {
     const it = raw as {
       id?: string
+      status?: string
       summary?: string
       start?: { dateTime?: string }
       attendees?: { self?: boolean; responseStatus?: string }[]
     }
     if (!it.start?.dateTime) continue // skip all-day events
-    const declined = (it.attendees ?? []).some(
-      (a) => a.self && a.responseStatus === 'declined'
-    )
+    const selfAttendee = (it.attendees ?? []).find((a) => a.self)
+    const declined = selfAttendee?.responseStatus === 'declined'
     if (declined) continue
     events.push({
       id: it.id ?? String(it.start.dateTime),
       title: it.summary ?? 'Untitled event',
-      start: new Date(it.start.dateTime).getTime()
+      start: new Date(it.start.dateTime).getTime(),
+      tentative: it.status === 'tentative' || selfAttendee?.responseStatus === 'tentative'
     })
   }
   return events

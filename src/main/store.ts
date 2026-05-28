@@ -9,6 +9,7 @@ export type Prefs = {
   soundEnabled: boolean
   staySignedIn: boolean
   launchAtLogin: boolean
+  suppressDuringScreenShare: boolean
   targetDisplay: 'cursor' | 'primary'
   theme: string
   flier: string
@@ -16,6 +17,7 @@ export type Prefs = {
   // --- Pro ---
   speed: 'normal' | 'fast' | 'ultra' // how fast the rig crosses the screen
   flyAtStart: boolean // a second fly-by at the meeting's start time (free)
+  skipTentative: boolean // suppress reminders for events marked tentative
   soundPack: string // which signature sound plays mid-flight
   flierHead: string // character head id
   flierColor: string // plane colour id
@@ -28,12 +30,14 @@ const DEFAULT_PREFS: Prefs = {
   soundEnabled: true,
   staySignedIn: true,
   launchAtLogin: false,
+  suppressDuringScreenShare: false,
   targetDisplay: 'cursor',
   theme: 'classic',
   flier: 'duck-plane',
   font: 'system',
   speed: 'normal',
   flyAtStart: false,
+  skipTentative: false,
   soundPack: 'quack',
   flierHead: 'duck',
   flierColor: 'red',

@@ -49,19 +49,21 @@ function tick(): void {
   const lead = prefs.leadMinutes * 60_000
   // A second fly-by right at the meeting's start time (free).
   const flyAtStart = prefs.flyAtStart
+  const skipTentative = prefs.skipTentative
 
   for (const ev of upcoming) {
+    if (skipTentative && ev.tentative) continue
+
     // 1) The lead-time reminder (e.g. "Call with Jack in 5 minutes").
     const triggerAt = ev.start - lead
     const leadKey = `${ev.id}:${prefs.leadMinutes}`
     const leadDue = now >= triggerAt && now < triggerAt + FIRE_WINDOW_MS
     if (leadDue && ev.start > now && !fired.has(leadKey)) {
-      fired.add(leadKey)
       const minutes = Math.max(1, Math.round((ev.start - now) / 60_000))
       const message = prefs.messageTemplate
         .replaceAll('{title}', ev.title)
         .replaceAll('{minutes}', String(minutes))
-      flyAcross({ message, durationMs: 9000, sound: prefs.soundEnabled })
+      if (flyAcross({ message, durationMs: 9000, sound: prefs.soundEnabled })) fired.add(leadKey)
     }
 
     // 2) Optional second fly-by right at the start time ("… starting now").
@@ -69,12 +71,15 @@ function tick(): void {
       const startKey = `${ev.id}:start`
       const startDue = now >= ev.start && now < ev.start + FIRE_WINDOW_MS
       if (startDue && !fired.has(startKey)) {
-        fired.add(startKey)
-        flyAcross({
-          message: `${ev.title} starting now`,
-          durationMs: 9000,
-          sound: prefs.soundEnabled
-        })
+        if (
+          flyAcross({
+            message: `${ev.title} starting now`,
+            durationMs: 9000,
+            sound: prefs.soundEnabled
+          })
+        ) {
+          fired.add(startKey)
+        }
       }
     }
   }
