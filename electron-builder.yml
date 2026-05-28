@@ -9,6 +9,7 @@ directories:
 files:
   - out/**/*
   - package.json
+  - build/*.png
   - "!**/*.{ts,map}"
 
 mac:

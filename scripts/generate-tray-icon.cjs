@@ -4,6 +4,9 @@ const zlib = require('node:zlib')
 const fs = require('node:fs')
 const path = require('node:path')
 
+const outDir = path.join(__dirname, '..', 'build')
+const windowsTraySource = path.join(__dirname, '..', 'site', 'thumb-head-duck.png')
+
 const CRC_TABLE = (() => {
   const t = new Uint32Array(256)
   for (let n = 0; n < 256; n++) {
@@ -74,8 +77,12 @@ function drawDuck(size) {
   return buf
 }
 
-const outDir = path.join(__dirname, '..', 'build')
 fs.mkdirSync(outDir, { recursive: true })
 fs.writeFileSync(path.join(outDir, 'iconTemplate.png'), encodePNG(18, drawDuck(18)))
 fs.writeFileSync(path.join(outDir, 'iconTemplate@2x.png'), encodePNG(36, drawDuck(36)))
+if (!fs.existsSync(windowsTraySource)) {
+  throw new Error(`Missing ${windowsTraySource} — add the Windows tray icon source there.`)
+}
+fs.copyFileSync(windowsTraySource, path.join(outDir, 'tray-icon.png'))
 console.log('Wrote build/iconTemplate.png and build/iconTemplate@2x.png')
+console.log('Wrote build/tray-icon.png (from site/thumb-head-duck.png)')
