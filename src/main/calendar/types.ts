@@ -2,7 +2,7 @@
 export type UpcomingEvent = { id: string; title: string; start: number }
 
 export type ProviderStatus = {
-  id: string // 'google' | 'icloud'
+  id: string // 'google' | 'icloud' | 'ical' | 'outlook'
   name: string
   connected: boolean
   detail: string | null // e.g. the connected email / Apple ID

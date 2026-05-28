@@ -1,7 +1,18 @@
 import { app, BrowserWindow } from 'electron'
+import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 
 let win: BrowserWindow | null = null
+
+function resolveWindowIcon(): string | undefined {
+  const candidates = [
+    join(app.getAppPath(), 'build', 'icon.png'),
+    join(process.resourcesPath, 'build', 'icon.png'),
+    join(__dirname, '../../../build/icon.png')
+  ]
+
+  return candidates.find((candidate) => existsSync(candidate))
+}
 
 /** Opens (or focuses) the settings window. */
 export function openSettings(): void {
@@ -20,6 +31,7 @@ export function openSettings(): void {
     maximizable: false,
     fullscreenable: false,
     title: 'Quakpit',
+    icon: process.platform === 'win32' ? resolveWindowIcon() : undefined,
     show: false,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),

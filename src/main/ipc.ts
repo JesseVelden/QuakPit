@@ -26,10 +26,12 @@ const IMAGE_MIME: Record<string, string> = {
 const FREE_CAL_MSG =
   'The free plan supports one calendar. Upgrade to Quakpit Pro to add more calendars.'
 
-/** How many calendars are connected across all providers (iCal feeds + iCloud). */
+/** How many calendars are connected across all providers. */
 function calendarCount(): number {
-  const icloud = calendar.statuses().find((s) => s.id === 'icloud')?.connected ? 1 : 0
-  return calendar.icalFeeds().length + icloud
+  const providerCount = calendar
+    .statuses()
+    .filter((status) => status.id !== 'ical' && status.connected).length
+  return calendar.icalFeeds().length + providerCount
 }
 
 /** Wires the settings renderer to the main process. */
@@ -55,16 +57,32 @@ export function registerIpc(): void {
 
   ipcMain.handle(
     'cal:connect',
-    async (_e, provider: string, params: { username?: string; password?: string }) => {
+    async (
+      _e,
+      provider: string,
+      params: {
+        username?: string
+        password?: string
+        storeId?: string
+        folderId?: string
+        storeName?: string
+        name?: string
+        path?: string
+      }
+    ) => {
       // Free plan = a single calendar. Block a 2nd source (allow reconnecting iCloud).
-      if (!license.isPremium() && calendar.icalFeeds().length >= 1) throw new Error(FREE_CAL_MSG)
+      if (!license.isPremium() && calendarCount() >= 1) throw new Error(FREE_CAL_MSG)
       const s = await calendar.connect(provider, params ?? {})
       startScheduler()
       return s
     }
   )
 
-  ipcMain.handle('cal:disconnect', (_e, provider: string) => calendar.disconnect(provider))
+  ipcMain.handle('cal:disconnect', (_e, provider: string) => {
+    const statuses = calendar.disconnect(provider)
+    startScheduler()
+    return statuses
+  })
 
   ipcMain.handle(
     'cal:configure',
@@ -74,6 +92,7 @@ export function registerIpc(): void {
 
   // iCal subscription links
   ipcMain.handle('ical:list', () => calendar.icalFeeds())
+  ipcMain.handle('outlook:listFolders', () => calendar.outlookFolders())
   ipcMain.handle('ical:add', async (_e, url: string, name?: string) => {
     // Free plan = a single calendar across all providers.
     if (!license.isPremium() && calendarCount() >= 1) throw new Error(FREE_CAL_MSG)
@@ -81,7 +100,11 @@ export function registerIpc(): void {
     startScheduler()
     return feeds
   })
-  ipcMain.handle('ical:remove', (_e, id: string) => calendar.icalRemove(id))
+  ipcMain.handle('ical:remove', (_e, id: string) => {
+    const feeds = calendar.icalRemove(id)
+    startScheduler()
+    return feeds
+  })
 
   ipcMain.handle('events:upcoming', async () => {
     try {

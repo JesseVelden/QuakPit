@@ -1,4 +1,4 @@
-import { app, globalShortcut } from 'electron'
+import { app, globalShortcut, Menu } from 'electron'
 import { createOverlayWindow, flyAcross } from './windows/overlay'
 import { openSettings } from './windows/settings'
 import { createTray } from './tray'
@@ -8,6 +8,8 @@ import { startScheduler } from './scheduler'
 import { initAutoUpdate } from './updater'
 import * as calendar from './calendar'
 import * as license from './license'
+
+const WINDOWS_APP_ID = 'com.ooblestudio.quakpit'
 
 // Only allow a single running instance of Quakpit.
 if (!app.requestSingleInstanceLock()) {
@@ -33,6 +35,11 @@ function sendTestFlight(): void {
 }
 
 app.whenReady().then(async () => {
+  if (process.platform === 'win32') {
+    app.setAppUserModelId(WINDOWS_APP_ID)
+    Menu.setApplicationMenu(null)
+  }
+
   // Quakpit is a regular app: it shows in the Dock and Cmd+Tab. (It also keeps
   // a menu-bar icon for quick access, and stays running in the background.)
   // Lock the Dock icon on so showing the overlay never drops us to accessory mode.

@@ -108,6 +108,16 @@ const iConnect = $<HTMLButtonElement>('i-connect')
 const iDisconnect = $<HTMLButtonElement>('i-disconnect')
 const iDetail = $('i-detail')
 const iError = $('i-error')
+// Outlook wizard
+const oStepForm = $('o-step-form')
+const oStepConnected = $('o-step-connected')
+const oFolder = $<HTMLSelectElement>('o-folder')
+const oHint = $('o-hint')
+const oRefresh = $<HTMLButtonElement>('o-refresh')
+const oConnect = $<HTMLButtonElement>('o-connect')
+const oDisconnect = $<HTMLButtonElement>('o-disconnect')
+const oDetail = $('o-detail')
+const oError = $('o-error')
 
 const planBadge = $('plan-badge')
 const licenseLine = $('license-line')
@@ -128,6 +138,8 @@ let previewCtx: AudioContext | null = null
 // A locked head/colour the free user is "trying" in the preview (not saved).
 let tryHead: string | null = null
 let tryColor: string | null = null
+let outlookFolders: OutlookFolder[] = []
+const supportsScreenSharePause = /(windows|macintosh|mac os x)/i.test(navigator.userAgent)
 let prefs: Prefs = {
   leadMinutes: 5,
   messageTemplate: '{title} in {minutes} minutes',
@@ -424,6 +436,7 @@ const show = (el: HTMLElement): void => el.classList.remove('hidden')
 function renderCalendar(statuses: ProviderStatus[]): void {
   const ic = statuses.find((s) => s.id === 'ical')
   const i = statuses.find((s) => s.id === 'icloud')
+  const o = statuses.find((s) => s.id === 'outlook')
 
   pickIcalStatus.textContent = ic?.connected ? (ic.detail ?? 'Connected') : 'Not connected'
   pickIcalStatus.classList.toggle('connected', !!ic?.connected)
@@ -433,6 +446,18 @@ function renderCalendar(statuses: ProviderStatus[]): void {
       : 'Connected'
     : 'Not connected'
   pickIcloudStatus.classList.toggle('connected', !!i?.connected)
+  pickOutlookStatus.textContent = !o?.configured
+    ? (o?.detail ?? 'Windows only')
+    : o?.connected
+      ? o.detail
+        ? `Connected · ${o.detail}`
+        : 'Connected'
+      : 'Not connected'
+  pickOutlookStatus.classList.toggle('connected', !!o?.connected)
+  if (outlookBtn) {
+    outlookBtn.disabled = !o?.configured
+    outlookBtn.classList.toggle('disabled', !o?.configured)
+  }
 
   // iCloud wizard: form → connected
   if (i?.connected) {
@@ -442,6 +467,22 @@ function renderCalendar(statuses: ProviderStatus[]): void {
   } else {
     show(iStepForm)
     hide(iStepConnected)
+  }
+
+  if (o?.connected) {
+    oDetail.textContent = o.detail ?? ''
+    hide(oStepForm)
+    show(oStepConnected)
+  } else {
+    show(oStepForm)
+    hide(oStepConnected)
+    if (!o?.configured) {
+      oHint.textContent = 'This option works only on Windows with classic Outlook installed.'
+      oFolder.innerHTML = '<option value="">Unavailable on this device</option>'
+      oFolder.disabled = true
+      oConnect.disabled = true
+      oRefresh.disabled = true
+    }
   }
 }
 
@@ -499,6 +540,63 @@ function renderFeeds(feeds: Feed[]): void {
   }
 }
 
+function renderOutlookFolders(folders: OutlookFolder[]): void {
+  outlookFolders = folders
+  const previous = oFolder.value
+  oFolder.innerHTML = ''
+
+  if (folders.length === 0) {
+    const option = document.createElement('option')
+    option.value = ''
+    option.textContent = 'No Outlook calendar folders found'
+    oFolder.append(option)
+    oFolder.disabled = true
+    oConnect.disabled = true
+    oHint.textContent = 'Open classic Outlook and make sure at least one calendar folder is available.'
+    return
+  }
+
+  for (const folder of folders) {
+    const option = document.createElement('option')
+    option.value = folder.id
+    option.textContent = `${folder.storeName} - ${folder.path}`
+    oFolder.append(option)
+  }
+
+  const hasPrevious = folders.some((folder) => folder.id === previous)
+  oFolder.value = hasPrevious ? previous : folders[0].id
+  oFolder.disabled = false
+  oConnect.disabled = false
+  oHint.textContent = 'Pick the calendar Quakpit should watch from Outlook on this PC.'
+}
+
+function selectedOutlookFolder(): OutlookFolder | null {
+  return outlookFolders.find((folder) => folder.id === oFolder.value) ?? null
+}
+
+async function loadOutlookFolders(): Promise<void> {
+  hide(oError)
+  oRefresh.disabled = true
+  oConnect.disabled = true
+  oRefresh.textContent = 'Loading…'
+  oHint.textContent = 'Loading your Outlook folders…'
+  try {
+    renderOutlookFolders(await q.outlookListFolders())
+    oRefresh.disabled = false
+  } catch (e) {
+    outlookFolders = []
+    oFolder.innerHTML = '<option value="">No calendar folders available</option>'
+    oFolder.disabled = true
+    oRefresh.disabled = false
+    oConnect.disabled = true
+    oHint.textContent = 'Quakpit could not read your Outlook folders.'
+    oError.textContent = (e as Error).message
+    show(oError)
+  } finally {
+    oRefresh.textContent = 'Refresh folders'
+  }
+}
+
 async function refreshCalendar(): Promise<void> {
   const statuses = await q.calStatus()
   renderCalendar(statuses)
@@ -521,14 +619,18 @@ function showPicker(): void {
   show(calPicker)
   hide(wizIcal)
   hide(wizIcloud)
+  hide(wizOutlook)
 }
 async function openWizard(provider: string): Promise<void> {
   hide(calPicker)
   hide(icalError)
   hide(iError)
+  hide(oError)
   wizIcal.classList.toggle('hidden', provider !== 'ical')
   wizIcloud.classList.toggle('hidden', provider !== 'icloud')
+  wizOutlook.classList.toggle('hidden', provider !== 'outlook')
   if (provider === 'ical') renderFeeds(await q.icalList())
+  if (provider === 'outlook') await loadOutlookFolders()
 }
 document.querySelectorAll<HTMLElement>('.provider-btn').forEach((b) =>
   b.addEventListener('click', () => {
@@ -578,6 +680,48 @@ iConnect.addEventListener('click', async () => {
 iDisconnect.addEventListener('click', async () => {
   renderCalendar(await q.calDisconnect('icloud'))
   renderUpcoming([], false)
+})
+
+// Outlook wizard
+oRefresh.addEventListener('click', () => {
+  void loadOutlookFolders()
+})
+oConnect.addEventListener('click', async () => {
+  hide(oError)
+  const folder = selectedOutlookFolder()
+  if (!folder) {
+    oError.textContent = 'Choose an Outlook calendar folder.'
+    show(oError)
+    return
+  }
+
+  oConnect.disabled = true
+  oRefresh.disabled = true
+  oConnect.textContent = 'Connecting…'
+  try {
+    renderCalendar(
+      await q.calConnect('outlook', {
+        storeId: folder.storeId,
+        folderId: folder.folderId,
+        storeName: folder.storeName,
+        name: folder.name,
+        path: folder.path
+      })
+    )
+    renderUpcoming(await q.upcoming(), true)
+  } catch (e) {
+    oError.textContent = (e as Error).message
+    show(oError)
+  } finally {
+    oConnect.disabled = outlookFolders.length === 0
+    oRefresh.disabled = false
+    oConnect.textContent = 'Connect'
+  }
+})
+oDisconnect.addEventListener('click', async () => {
+  renderCalendar(await q.calDisconnect('outlook'))
+  await loadOutlookFolders()
+  await refreshCalendar()
 })
 
 // ---- License / Pro -------------------------------------------------------

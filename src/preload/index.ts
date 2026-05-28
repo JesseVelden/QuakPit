@@ -28,6 +28,7 @@ contextBridge.exposeInMainWorld('quakpit', {
   calDisconnect: (provider: string) => ipcRenderer.invoke('cal:disconnect', provider),
   calConfigure: (provider: string, params: { clientId?: string; clientSecret?: string }) =>
     ipcRenderer.invoke('cal:configure', provider, params),
+  outlookListFolders: () => ipcRenderer.invoke('outlook:listFolders'),
   icalList: () => ipcRenderer.invoke('ical:list'),
   icalAdd: (url: string, name?: string) => ipcRenderer.invoke('ical:add', url, name),
   icalRemove: (id: string) => ipcRenderer.invoke('ical:remove', id),

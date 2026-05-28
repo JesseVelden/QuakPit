@@ -2,6 +2,7 @@ import { app, BrowserWindow, screen } from 'electron'
 import { join } from 'node:path'
 import { getPrefs } from '../store'
 import { isPremium } from '../license'
+import { isScreenSharingActive } from './screen-sharing'
 
 /**
  * Showing the transparent overlay can make macOS drop the app to "accessory"
@@ -30,6 +31,16 @@ const SPEED_MULT: Record<string, number> = { normal: 1, fast: 1.5, ultra: 2 }
 let overlay: BrowserWindow | null = null
 let ready = false
 let pending: Flight | null = null
+
+function applyOverlayZOrder(win: BrowserWindow): void {
+  win.setAlwaysOnTop(true, process.platform === 'win32' ? 'pop-up-menu' : 'floating')
+}
+
+function refreshOverlayVisibility(win: BrowserWindow): void {
+  if (process.platform !== 'win32') return
+  win.showInactive()
+  win.moveTop()
+}
 
 /**
  * Creates the transparent, click-through, always-on-top window that the plane
@@ -72,7 +83,7 @@ export function createOverlayWindow(): BrowserWindow {
   // Float above (almost) everything, on every space, including fullscreen apps.
   // 'floating' = above your app windows, but below the Dock & menu bar (so they
   // stay visible during a flight). 'screen-saver' would cover the whole screen.
-  overlay.setAlwaysOnTop(true, 'floating')
+  applyOverlayZOrder(overlay)
   overlay.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
   // Never intercept clicks — let them pass through to the apps underneath.
   overlay.setIgnoreMouseEvents(true, { forward: true })
@@ -102,14 +113,16 @@ export function createOverlayWindow(): BrowserWindow {
 }
 
 /** Runs one flight: positions the (already-shown) overlay and triggers the animation. */
-export function flyAcross(flight: Flight): void {
+export function flyAcross(flight: Flight): boolean {
   try {
-    if (!overlay || overlay.isDestroyed()) createOverlayWindow()
-    if (!overlay) return
-
     // Banner theme, head + plane colour, custom sounds and flight speed are all
     // Pro — enforced here so the UI can't be bypassed. Typography is free.
     const prefs = getPrefs()
+    if (prefs.suppressDuringScreenShare && isScreenSharingActive()) return false
+
+    if (!overlay || overlay.isDestroyed()) createOverlayWindow()
+    if (!overlay) return false
+
     const pro = isPremium()
     flight = {
       ...flight,
@@ -128,7 +141,8 @@ export function flyAcross(flight: Flight): void {
         ? screen.getPrimaryDisplay()
         : screen.getDisplayNearestPoint(screen.getCursorScreenPoint())
     overlay.setBounds(display.bounds)
-    overlay.setAlwaysOnTop(true, 'floating')
+    applyOverlayZOrder(overlay)
+    refreshOverlayVisibility(overlay)
 
     if (ready) {
       overlay.webContents.send('flight:start', flight)
@@ -136,7 +150,9 @@ export function flyAcross(flight: Flight): void {
       pending = flight
     }
     keepDockVisible()
+    return true
   } catch (err) {
     console.error('[flyAcross] failed (ignored):', err)
+    return false
   }
 }

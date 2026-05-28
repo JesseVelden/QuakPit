@@ -51,6 +51,7 @@ const licensePath = (): string => join(dataDir(), 'license.bin')
 const icloudPath = (): string => join(dataDir(), 'icloud.bin')
 const googleCredsPath = (): string => join(dataDir(), 'google-creds.bin')
 const icalPath = (): string => join(dataDir(), 'ical-feeds.bin')
+const outlookPath = (): string => join(dataDir(), 'outlook.bin')
 // The user's own plane image, kept as a ready-to-render data URL (not sensitive).
 const customFlierPath = (): string => join(dataDir(), 'custom-flier.txt')
 
@@ -203,6 +204,34 @@ export function loadIcalFeeds(): string | null {
     return safeStorage.decryptString(readFileSync(icalPath()))
   } catch {
     return null
+  }
+}
+
+// --- Outlook classic folder selection (store + folder ids), encrypted ---
+
+export function saveOutlookSelection(json: string): void {
+  try {
+    if (!safeStorage.isEncryptionAvailable()) return
+    writeFileSync(outlookPath(), safeStorage.encryptString(json))
+  } catch {
+    /* ignore */
+  }
+}
+
+export function loadOutlookSelection(): string | null {
+  try {
+    if (!existsSync(outlookPath()) || !safeStorage.isEncryptionAvailable()) return null
+    return safeStorage.decryptString(readFileSync(outlookPath()))
+  } catch {
+    return null
+  }
+}
+
+export function clearOutlookSelection(): void {
+  try {
+    if (existsSync(outlookPath())) rmSync(outlookPath())
+  } catch {
+    /* ignore */
   }
 }
 

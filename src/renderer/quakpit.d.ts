@@ -1,5 +1,5 @@
 // Shared ambient types for the renderer side (the API exposed by the preload).
-export {}
+export { }
 
 declare global {
   type Flight = {
@@ -19,12 +19,14 @@ declare global {
     soundEnabled: boolean
     staySignedIn: boolean
     launchAtLogin: boolean
+    suppressDuringScreenShare: boolean
     targetDisplay: 'cursor' | 'primary'
     theme: string
     flier: string
     font: string
     speed: 'normal' | 'fast' | 'ultra'
     flyAtStart: boolean
+    skipTentative: boolean
     soundPack: string
     flierHead: string
     flierColor: string
@@ -38,8 +40,16 @@ declare global {
     detail: string | null
     configured: boolean
   }
-  type UpcomingEvent = { id: string; title: string; start: number }
+  type UpcomingEvent = { id: string; title: string; start: number; tentative?: boolean }
   type Feed = { id: string; name: string; url: string }
+  type OutlookFolder = {
+    id: string
+    storeId: string
+    folderId: string
+    storeName: string
+    name: string
+    path: string
+  }
   type LicenseStatus = {
     premium: boolean
     active: boolean
@@ -55,13 +65,22 @@ declare global {
     calStatus: () => Promise<ProviderStatus[]>
     calConnect: (
       provider: string,
-      params?: { username?: string; password?: string }
+      params?: {
+        username?: string
+        password?: string
+        storeId?: string
+        folderId?: string
+        storeName?: string
+        name?: string
+        path?: string
+      }
     ) => Promise<ProviderStatus[]>
     calDisconnect: (provider: string) => Promise<ProviderStatus[]>
     calConfigure: (
       provider: string,
       params: { clientId?: string; clientSecret?: string }
     ) => Promise<ProviderStatus[]>
+    outlookListFolders: () => Promise<OutlookFolder[]>
     icalList: () => Promise<Feed[]>
     icalAdd: (url: string, name?: string) => Promise<Feed[]>
     icalRemove: (id: string) => Promise<Feed[]>
